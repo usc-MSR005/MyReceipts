@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">MyReceipts</string>
+    <string name="receipt_title_hint">Enter a title for the receipt.</string>
+    <string name="receipt_title_label">Receipt</string>
+    <string name="receipt_shop_hint">Enter the shop name.</string>
+    <string name="receipt_details_label">Details</string>
+    <string name="receipt_comment_hint">Add a comment.</string>
+</resources>
