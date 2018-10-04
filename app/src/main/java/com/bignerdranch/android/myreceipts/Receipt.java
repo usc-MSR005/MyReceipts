@@ -12,9 +12,14 @@ public class Receipt {
     private Date mDate;
 
     public Receipt() {
-        mId = UUID.randomUUID();
+        this(UUID.randomUUID());
+    }
+
+    public Receipt(UUID id) {
+        mId = id;
         mDate = new Date();
     }
+
     public UUID getId() {
         return mId;
     }
@@ -41,5 +46,9 @@ public class Receipt {
     }
     public void setComment(String comment) {
         mComment = comment;
+    }
+
+    public String getPhotoFilename() {
+        return "IMG_" + getId().toString() + ".jpg";
     }
 }
