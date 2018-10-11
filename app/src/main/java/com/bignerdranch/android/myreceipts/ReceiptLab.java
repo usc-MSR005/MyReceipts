@@ -109,6 +109,8 @@ public class ReceiptLab {
         values.put(ReceiptDbSchema.ReceiptTable.Cols.SHOP, receipt.getShop());
         values.put(ReceiptDbSchema.ReceiptTable.Cols.DATE, receipt.getDate().getTime());
         values.put(ReceiptDbSchema.ReceiptTable.Cols.COMMENT, receipt.getComment());
+        values.put(ReceiptDbSchema.ReceiptTable.Cols.LATITUDE, receipt.getLat());
+        values.put(ReceiptDbSchema.ReceiptTable.Cols.LONGITUDE, receipt.getLong());
         return values;
     }
 }

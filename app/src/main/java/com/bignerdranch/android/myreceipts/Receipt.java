@@ -10,6 +10,8 @@ public class Receipt {
     private String mShop;
     private String mComment;
     private Date mDate;
+    private Double mLong;
+    private Double mLat;
 
     public Receipt() {
         this(UUID.randomUUID());
@@ -47,6 +49,10 @@ public class Receipt {
     public void setComment(String comment) {
         mComment = comment;
     }
+    public Double getLong() { return mLong; }
+    public Double getLat() { return mLat; }
+    public void setLong(Double aLong) { mLong = aLong; }
+    public void setLat(Double lat) { mLat = lat; }
 
     public String getPhotoFilename() {
         return "IMG_" + getId().toString() + ".jpg";

@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.List;
 public class ReceiptListFragment extends Fragment {
     private RecyclerView mReceiptRecyclerView;
     private ReceiptAdapter mAdapter;
+    private WebView mWebView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,6 +77,9 @@ public class ReceiptListFragment extends Fragment {
                 startActivity(intent);
                 return true;
             case R.id.help:
+                Intent i = new Intent(getActivity(), HelpWebPage.class);
+                startActivity(i);
+
                 Intent browserIntent = new Intent (Intent.ACTION_VIEW, Uri.parse("https://en.wikipedia.org/wiki/Receipt"));
                 startActivity(browserIntent);
             default:

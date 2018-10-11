@@ -1,19 +1,24 @@
 package com.bignerdranch.android.myreceipts;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,10 +27,18 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
+
 import java.io.File;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+
+import static android.content.ContentValues.TAG;
 
 public class ReceiptFragment extends Fragment {
 
@@ -45,6 +58,8 @@ public class ReceiptFragment extends Fragment {
     private Button mReportButton;
     private ImageButton mPhotoButton;
     private ImageView mPhotoView;
+    private Button mShowMapButton;
+    private GoogleApiClient mClient;
 
     public static ReceiptFragment newInstance(UUID receiptId) {
         Bundle args = new Bundle();
@@ -60,6 +75,10 @@ public class ReceiptFragment extends Fragment {
         UUID receiptId = (UUID) getArguments().getSerializable(ARG_RECEIPT_ID);
         mReceipt = ReceiptLab.get(getActivity()).getReceipt(receiptId);
         mPhotoFile = ReceiptLab.get(getActivity()).getPhotoFile(mReceipt);
+
+        mClient = new GoogleApiClient.Builder(getActivity())
+                .addApi(LocationServices.API)
+                .build();
     }
 
     @Override
@@ -109,6 +128,17 @@ public class ReceiptFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {
                 // This one too
+            }
+        });
+
+
+
+        mShowMapButton = (Button) v.findViewById(R.id.show_map);
+        mShowMapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), MapsActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -191,8 +221,55 @@ public class ReceiptFragment extends Fragment {
         mPhotoView = (ImageView) v.findViewById(R.id.receipt_photo);
         updatePhotoView();
 
+        mClient = new GoogleApiClient.Builder(getActivity())
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                    @Override
+                    public void onConnected(@Nullable Bundle bundle) {
+                        LocationRequest request = LocationRequest.create();
+                        request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                        request.setNumUpdates(1);
+                        request.setInterval(0);
+
+                        if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION)
+                                != PackageManager.PERMISSION_GRANTED) {
+                            return;
+                        }
+                        LocationServices.FusedLocationApi
+                                .requestLocationUpdates(mClient, request, new LocationListener() {
+                                    @Override
+                                    public void onLocationChanged(Location location) {
+                                        Log.i(TAG, "Got a fix: " + location);
+                                        Log.i(TAG, String.valueOf(location.getLatitude()));
+                                        Log.i(TAG, String.valueOf(location.getLongitude()));
+                                        String latitudeString = String.valueOf(location.getLatitude());
+                                        String message = String.format("%f", location.getLatitude());
+                                        mReceipt.setLat("" + String.valueOf(location.getLatitude()));
+
+                                    }
+                                });
+                    }
+                    @Override
+                    public void onConnectionSuspended(int i) {
+                    }
+                })
+                .build();
+
         return v;
     }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        getActivity().invalidateOptionsMenu();
+        mClient.connect();
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        mClient.disconnect();
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != Activity.RESULT_OK) {

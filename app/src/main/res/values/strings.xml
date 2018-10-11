@@ -15,4 +15,9 @@ The crime was discovered on %2$s. %3$s, and %4$s
 </string>
     <string name="receipt_report_subject">MyReceipt Report</string>
     <string name="send_report">Send receipt report via</string>
+    <string name="location_latitude">Latitude:</string>
+    <string name="location_longitiude">Longitude:</string>
+    <string name="map_show">Show Map</string>
+    <string name="google_map_key">AIzaSyDtw_wB4GN1DnuX3hl1wQiV6g-I26vdCEs</string>
+    <string name="title_activity_maps">Map</string>
 </resources>
