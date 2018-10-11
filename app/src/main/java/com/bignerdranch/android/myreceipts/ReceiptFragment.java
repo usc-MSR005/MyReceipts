@@ -26,6 +26,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
@@ -45,6 +46,9 @@ public class ReceiptFragment extends Fragment {
     private static final String ARG_RECEIPT_ID = "receipt_id";
     private static final String DIALOG_DATE = "DialogDate";
 
+    public final static String LATITUDE ="com.bignerdranch.android.myreceipts.latitude";
+    public final static String LONGITUDE ="com.bignerdranch.android.myreceipts.latitude";
+
     private static final int REQUEST_DATE = 0;
     private static final int REQUEST_PHOTO= 2;
 
@@ -59,6 +63,8 @@ public class ReceiptFragment extends Fragment {
     private ImageButton mPhotoButton;
     private ImageView mPhotoView;
     private Button mShowMapButton;
+    private TextView mLat;
+    private TextView mLong;
     private GoogleApiClient mClient;
 
     public static ReceiptFragment newInstance(UUID receiptId) {
@@ -131,16 +137,25 @@ public class ReceiptFragment extends Fragment {
             }
         });
 
-
-
         mShowMapButton = (Button) v.findViewById(R.id.show_map);
         mShowMapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), MapsActivity.class);
+                intent.putExtra(LATITUDE, String.valueOf(mReceipt.getLat()));
+                intent.putExtra(LONGITUDE, String.valueOf(mReceipt.getLong()));
                 startActivity(intent);
             }
         });
+
+        mReceipt.setLat(15.0);
+        mReceipt.setLong(15.0);
+
+        mLat = (TextView) v.findViewById(R.id.location_latitude);
+        mLat.setText("Latitude: " + mReceipt.getLat());
+
+        mLong = (TextView) v.findViewById(R.id.location_longitude);
+        mLong.setText("Longitude: " + mReceipt.getLong());
 
         mDateButton = (Button) v.findViewById(R.id.receipt_date);
         mDateButton.setText(mReceipt.getDate().toString());
@@ -230,9 +245,11 @@ public class ReceiptFragment extends Fragment {
                         request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
                         request.setNumUpdates(1);
                         request.setInterval(0);
+                        Log.i(TAG, "TEST");
 
                         if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION)
                                 != PackageManager.PERMISSION_GRANTED) {
+                            Log.i(TAG, "TEST");
                             return;
                         }
                         LocationServices.FusedLocationApi
@@ -240,12 +257,10 @@ public class ReceiptFragment extends Fragment {
                                     @Override
                                     public void onLocationChanged(Location location) {
                                         Log.i(TAG, "Got a fix: " + location);
+                                        mReceipt.setLat(location.getLatitude());
+                                        mReceipt.setLong(location.getLongitude());
                                         Log.i(TAG, String.valueOf(location.getLatitude()));
                                         Log.i(TAG, String.valueOf(location.getLongitude()));
-                                        String latitudeString = String.valueOf(location.getLatitude());
-                                        String message = String.format("%f", location.getLatitude());
-                                        mReceipt.setLat("" + String.valueOf(location.getLatitude()));
-
                                     }
                                 });
                     }

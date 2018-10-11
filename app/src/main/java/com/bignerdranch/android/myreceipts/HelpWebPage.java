@@ -10,19 +10,20 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 public class HelpWebPage extends AppCompatActivity {
+
     private WebView mWebView;
     private ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_helpwebpage);
+        setContentView(R.layout.activity_webpagehelp);
 
         mWebView = (WebView) findViewById(R.id.webview);
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.setWebViewClient(new WebViewClient(){
             @Override
-                    public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 return false;
             }
         });

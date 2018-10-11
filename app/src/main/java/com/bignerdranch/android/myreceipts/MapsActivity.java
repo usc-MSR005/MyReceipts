@@ -1,7 +1,9 @@
 package com.bignerdranch.android.myreceipts;
 
+import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -11,7 +13,12 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import static android.content.ContentValues.TAG;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+
+    public final static String LATITUDE ="com.bignerdranch.android.myreceipts.latitude";
+    public final static String LONGITUDE ="com.bignerdranch.android.myreceipts.latitude";
 
     private GoogleMap mMap;
 
@@ -23,6 +30,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
     }
 
 
@@ -43,15 +51,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void updateUI() {
-        //LatLng myPoint = new LatLng(latitude, longitude);
+        Intent intent = getIntent();
+        String lati = intent.getStringExtra(LATITUDE);
+        String longi = intent.getStringExtra(LONGITUDE);
 
-        //MarkerOptions myMarker = new MarkerOptions().position(myPoint).title("Receipt location");
+        LatLng myPoint = new LatLng(Float.parseFloat(lati), Float.parseFloat(longi));
+
+
+        MarkerOptions myMarker = new MarkerOptions().position(myPoint).title("Receipt location");
 
         mMap.clear();
-        //mMap.addMarker(myMarker);
+        mMap.addMarker(myMarker);
 
         int zoomLevel = 15;
-        //CameraUpdate update = CameraUpdateFactory.newLatLng(myPoint, zoomLevel);
-        //mMap.animateCamera(update);
+        CameraUpdate update = CameraUpdateFactory.newLatLngZoom(myPoint, zoomLevel);
+        mMap.animateCamera(update);
     }
 }

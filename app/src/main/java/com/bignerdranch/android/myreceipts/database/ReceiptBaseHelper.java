@@ -10,6 +10,8 @@ import com.bignerdranch.android.myreceipts.database.ReceiptDbSchema.ReceiptTable
 public class ReceiptBaseHelper extends SQLiteOpenHelper {
     private static final int VERSION = 1;
     private static final String DATABASE_NAME = "receiptBase.db";
+
+
     public ReceiptBaseHelper(Context context) {
         super(context, DATABASE_NAME, null, VERSION);
     }
@@ -22,8 +24,8 @@ public class ReceiptBaseHelper extends SQLiteOpenHelper {
                 ReceiptTable.Cols.SHOP + ", " +
                 ReceiptTable.Cols.DATE + ", " +
                 ReceiptTable.Cols.COMMENT + ", " +
-                ReceiptTable.Cols.LATITUDE + ", " +
-                ReceiptTable.Cols.LONGITUDE +
+                ReceiptTable.Cols.LATITUDE + " REAL, "+
+                ReceiptTable.Cols.LONGITUDE + " REAL "+
 
                 ")");
     }
