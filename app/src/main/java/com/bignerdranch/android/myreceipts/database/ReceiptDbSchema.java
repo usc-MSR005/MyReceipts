@@ -14,4 +14,13 @@ public class ReceiptDbSchema {
             public static final String LONGITUDE = "longitude";
         }
     }
+
+    public static final class LocationTable {
+        public static final String LOCATION = "location";
+
+        public static final class Cols {
+            public static final String CURRENTLATITUDE = "current_latitude";
+            public static final String CURRENTLONGITUDE = "current_longitude";
+        }
+    }
 }

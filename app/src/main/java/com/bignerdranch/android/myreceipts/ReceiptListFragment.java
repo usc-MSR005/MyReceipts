@@ -1,10 +1,11 @@
 package com.bignerdranch.android.myreceipts;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,12 +17,21 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.TextView;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+
 import java.util.List;
+
+import static android.content.ContentValues.TAG;
 
 public class ReceiptListFragment extends Fragment {
     private RecyclerView mReceiptRecyclerView;
     private ReceiptAdapter mAdapter;
     private WebView mWebView;
+
+    public final static String NEW_RECEIPT ="com.bignerdranch.android.myreceipts.new_receipt";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -80,8 +90,8 @@ public class ReceiptListFragment extends Fragment {
                 Intent i = new Intent(getActivity(), HelpWebPage.class);
                 startActivity(i);
 
-                Intent browserIntent = new Intent (Intent.ACTION_VIEW, Uri.parse("https://en.wikipedia.org/wiki/Receipt"));
-                startActivity(browserIntent);
+                //Intent browserIntent = new Intent (Intent.ACTION_VIEW, Uri.parse("https://en.wikipedia.org/wiki/Receipt"));
+                //startActivity(browserIntent);
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -111,6 +121,7 @@ public class ReceiptListFragment extends Fragment {
         @Override
         public void onClick(View view) {
             Intent intent = ReceiptActivity.newIntent(getActivity(), mReceipt.getId());
+            intent.putExtra(NEW_RECEIPT, "FALSE");
             startActivity(intent);
         }
     }

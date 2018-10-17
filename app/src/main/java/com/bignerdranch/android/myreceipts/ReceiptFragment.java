@@ -2,9 +2,11 @@ package com.bignerdranch.android.myreceipts;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
@@ -26,8 +28,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bignerdranch.android.myreceipts.database.ReceiptDbSchema;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 
@@ -47,7 +52,7 @@ public class ReceiptFragment extends Fragment {
     private static final String DIALOG_DATE = "DialogDate";
 
     public final static String LATITUDE ="com.bignerdranch.android.myreceipts.latitude";
-    public final static String LONGITUDE ="com.bignerdranch.android.myreceipts.latitude";
+    public final static String LONGITUDE ="com.bignerdranch.android.myreceipts.longitude";
 
     private static final int REQUEST_DATE = 0;
     private static final int REQUEST_PHOTO= 2;
@@ -85,6 +90,8 @@ public class ReceiptFragment extends Fragment {
         mClient = new GoogleApiClient.Builder(getActivity())
                 .addApi(LocationServices.API)
                 .build();
+
+
     }
 
     @Override
@@ -147,15 +154,6 @@ public class ReceiptFragment extends Fragment {
                 startActivity(intent);
             }
         });
-
-        mReceipt.setLat(15.0);
-        mReceipt.setLong(15.0);
-
-        mLat = (TextView) v.findViewById(R.id.location_latitude);
-        mLat.setText("Latitude: " + mReceipt.getLat());
-
-        mLong = (TextView) v.findViewById(R.id.location_longitude);
-        mLong.setText("Longitude: " + mReceipt.getLong());
 
         mDateButton = (Button) v.findViewById(R.id.receipt_date);
         mDateButton.setText(mReceipt.getDate().toString());
@@ -236,6 +234,9 @@ public class ReceiptFragment extends Fragment {
         mPhotoView = (ImageView) v.findViewById(R.id.receipt_photo);
         updatePhotoView();
 
+        mLat = (TextView) v.findViewById(R.id.location_latitude);
+        mLong = (TextView) v.findViewById(R.id.location_longitude);
+
         mClient = new GoogleApiClient.Builder(getActivity())
                 .addApi(LocationServices.API)
                 .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
@@ -245,11 +246,9 @@ public class ReceiptFragment extends Fragment {
                         request.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
                         request.setNumUpdates(1);
                         request.setInterval(0);
-                        Log.i(TAG, "TEST");
 
                         if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION)
                                 != PackageManager.PERMISSION_GRANTED) {
-                            Log.i(TAG, "TEST");
                             return;
                         }
                         LocationServices.FusedLocationApi
@@ -257,12 +256,23 @@ public class ReceiptFragment extends Fragment {
                                     @Override
                                     public void onLocationChanged(Location location) {
                                         Log.i(TAG, "Got a fix: " + location);
-                                        mReceipt.setLat(location.getLatitude());
-                                        mReceipt.setLong(location.getLongitude());
+
+                                        if(mReceipt.getLat() == 0.0 && mReceipt.getLong() == 0.0) {
+                                            mReceipt.setLat(location.getLatitude());
+                                            mReceipt.setLong(location.getLongitude());
+
+                                            mLat.setText("Latitude: " + location.getLatitude());
+                                            mLong.setText("Longitude: " + location.getLongitude());
+                                        }
+
                                         Log.i(TAG, String.valueOf(location.getLatitude()));
                                         Log.i(TAG, String.valueOf(location.getLongitude()));
+                                        Log.i(TAG, String.valueOf(mReceipt.getLat()));
+                                        Log.i(TAG, String.valueOf(mReceipt.getLong()));
                                     }
+
                                 });
+
                     }
                     @Override
                     public void onConnectionSuspended(int i) {
@@ -270,7 +280,18 @@ public class ReceiptFragment extends Fragment {
                 })
                 .build();
 
+        if(mReceipt.getLat() == 0.0 && mReceipt.getLong() == 0.0){
+
+            mDeleteButton.setVisibility(View.INVISIBLE);
+
+        } else {
+
+            mLat.setText("Latitude: " + String.valueOf(mReceipt.getLat()));
+            mLong.setText("Longitude: " + String.valueOf(mReceipt.getLong()));
+
+        }
         return v;
+
     }
 
     @Override
@@ -279,6 +300,7 @@ public class ReceiptFragment extends Fragment {
         getActivity().invalidateOptionsMenu();
         mClient.connect();
     }
+
     @Override
     public void onStop() {
         super.onStop();

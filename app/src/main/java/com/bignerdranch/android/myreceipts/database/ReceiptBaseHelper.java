@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.bignerdranch.android.myreceipts.Receipt;
+import com.bignerdranch.android.myreceipts.database.ReceiptDbSchema.LocationTable;
 import com.bignerdranch.android.myreceipts.database.ReceiptDbSchema.ReceiptTable;
 
 public class ReceiptBaseHelper extends SQLiteOpenHelper {
@@ -26,6 +27,12 @@ public class ReceiptBaseHelper extends SQLiteOpenHelper {
                 ReceiptTable.Cols.COMMENT + ", " +
                 ReceiptTable.Cols.LATITUDE + " REAL, "+
                 ReceiptTable.Cols.LONGITUDE + " REAL "+
+
+                ")");
+        db.execSQL("create table " + LocationTable.LOCATION + "(" +
+                " _id integer primary key autoincrement, " +
+                LocationTable.Cols.CURRENTLATITUDE + " REAL, "+
+                LocationTable.Cols.CURRENTLONGITUDE + " REAL "+
 
                 ")");
     }

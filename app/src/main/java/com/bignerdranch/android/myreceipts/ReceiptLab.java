@@ -38,6 +38,7 @@ public class ReceiptLab {
         mDatabase.insert(ReceiptDbSchema.ReceiptTable.NAME, null, values);
     }
 
+
     public void deleteReceipt(Receipt r) {
         String uuidString = r.getId().toString();
 
