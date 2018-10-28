@@ -1,12 +1,9 @@
 package com.bignerdranch.android.myreceipts;
 
-import android.Manifest;
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.Uri;
@@ -28,11 +25,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bignerdranch.android.myreceipts.database.ReceiptDbSchema;
-import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 
@@ -68,8 +62,8 @@ public class ReceiptFragment extends Fragment {
     private ImageButton mPhotoButton;
     private ImageView mPhotoView;
     private Button mShowMapButton;
-    private TextView mLat;
-    private TextView mLong;
+    private TextView mLatitude;
+    private TextView mLongitude;
     private GoogleApiClient mClient;
 
     public static ReceiptFragment newInstance(UUID receiptId) {
@@ -234,8 +228,8 @@ public class ReceiptFragment extends Fragment {
         mPhotoView = (ImageView) v.findViewById(R.id.receipt_photo);
         updatePhotoView();
 
-        mLat = (TextView) v.findViewById(R.id.location_latitude);
-        mLong = (TextView) v.findViewById(R.id.location_longitude);
+        mLatitude = (TextView) v.findViewById(R.id.receipt_latitude);
+        mLongitude = (TextView) v.findViewById(R.id.location_longitude);
 
         mClient = new GoogleApiClient.Builder(getActivity())
                 .addApi(LocationServices.API)
@@ -261,8 +255,8 @@ public class ReceiptFragment extends Fragment {
                                             mReceipt.setLat(location.getLatitude());
                                             mReceipt.setLong(location.getLongitude());
 
-                                            mLat.setText("Latitude: " + location.getLatitude());
-                                            mLong.setText("Longitude: " + location.getLongitude());
+                                            mLatitude.setText("Latitude: " + location.getLatitude());
+                                            mLongitude.setText("Longitude: " + location.getLongitude());
                                         }
 
                                         Log.i(TAG, String.valueOf(location.getLatitude()));
@@ -286,8 +280,8 @@ public class ReceiptFragment extends Fragment {
 
         } else {
 
-            mLat.setText("Latitude: " + String.valueOf(mReceipt.getLat()));
-            mLong.setText("Longitude: " + String.valueOf(mReceipt.getLong()));
+            mLatitude.setText("Latitude: " + String.valueOf(mReceipt.getLat()));
+            mLongitude.setText("Longitude: " + String.valueOf(mReceipt.getLong()));
 
         }
         return v;
@@ -319,7 +313,7 @@ public class ReceiptFragment extends Fragment {
             mDateButton.setText(mReceipt.getDate().toString());
         } else if (requestCode == REQUEST_PHOTO) {
             Uri uri = FileProvider.getUriForFile(getActivity(),
-                    "com.bignerdranch.android.criminalintent.fileprovider",
+                    "com.bignerdranch.android.myreceipt.fileprovider",
                     mPhotoFile);
             getActivity().revokeUriPermission(uri,
                     Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
